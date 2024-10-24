@@ -70,7 +70,7 @@ async def getPrice(address):
     print(f'Fetching price for address: {address}')
     result = await get_nft_collection_floor(address)
     if result is None:
-        asyncio.sleep(15)
+        asyncio.sleep(40)
         result = await get_nft_collection_floor(address)
     prices.append(result)
     print(f'\033[92m Price fetched: {result} \033[0m')
@@ -119,7 +119,7 @@ async def getData(address, timeframe):
                 await writeFloorInFile(data, address, timeframe)
         except Exception as e:
             print(f"Bro, eto oshibka bro: {e}")
-        await asyncio.sleep(15)
+        await asyncio.sleep(60)
 
 async def main(address, timeframe):
     print('Starting main function')

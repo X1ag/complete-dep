@@ -9,9 +9,9 @@ def start_parser(address, timeframe):
 def start_main():
 	asyncio.run(api.main())
  
-# threadHours = Thread(target=start_parser, args=("EQAOQdwdw8kGftJCSFgOErM1mBjYPe4DBPq8-AhF6vr9si5N", "1h"), daemon=True)
+threadHours = Thread(target=start_parser, args=("EQAOQdwdw8kGftJCSFgOErM1mBjYPe4DBPq8-AhF6vr9si5N", "1h"), daemon=True)
 threadMinutes = Thread(target=start_parser, args=("EQAOQdwdw8kGftJCSFgOErM1mBjYPe4DBPq8-AhF6vr9si5N", "5m"), daemon=True)
-# threadHours.start()
+threadHours.start()
 threadMinutes.start()
 start_main()
 print('script started')
