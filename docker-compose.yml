@@ -24,7 +24,7 @@ services:
       - '5001:4200'
 
   db:
-    image: postgres
+    image: complete-dep_candles-database
     restart: always
     environment:
       DB_USER: ${DB_USER}
