@@ -30,7 +30,7 @@ def check_db_connection():
 		if conn:
 			conn.close()
 check_db_connection()
-	
+
 def insert_data(address, openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange, timeframe):
 	try:
 		# Установка соединения с базой данных
@@ -45,11 +45,41 @@ def insert_data(address, openTime, closeTime, currentPrice, openPrice, maxPrice,
 		with conn.cursor() as curs:
 			# SQL-запрос для вставки данных
 			if timeframe == '1h':
+				create_query = '''
+					CREATE TABLE IF NOT EXISTS candlesHours (
+					address VARCHAR(255) NOT NULL,
+					openTime BIGINT NOT NULL,
+					closeTime BIGINT NOT NULL,
+					currentPrice FLOAT NOT NULL,
+					openPrice FLOAT,
+					maxPrice FLOAT,
+					minPrice FLOAT,
+					closePrice FLOAT,
+					priceChange FLOAT
+					);
+					'''
+				curs.execute(create_query)
+
 				insert_query = '''
 				INSERT INTO candlesHours (address, openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
 				%s, %s, %s, %s, %s, %s, %s, %s, %s
 				);'''
 			elif timeframe == '5m':
+				create_query = '''
+			CREATE TABLE IF NOT EXISTS candlesMinutes (
+			address VARCHAR(255) NOT NULL,
+			openTime BIGINT NOT NULL,
+			closeTime BIGINT NOT NULL,
+			currentPrice FLOAT NOT NULL,
+			openPrice FLOAT,
+			maxPrice FLOAT,
+			minPrice FLOAT,
+			closePrice FLOAT,
+			priceChange FLOAT
+			);
+			'''
+				curs.execute(create_query)
+
 				insert_query = '''
 							INSERT INTO candlesMinutes (address, openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
 							%s, %s, %s, %s, %s, %s, %s, %s, %s

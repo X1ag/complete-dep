@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import pytz
 import json
 import os
-from db.connect_db import insert_data
+from db.connect_db import check_db_connection, insert_data
 from methods.get_floor import get_nft_collection_floor
 
 timezone = pytz.timezone('Europe/Moscow')
@@ -88,8 +88,8 @@ async def writeFloorInFile(data, address, timeframe):
         file.write('\n')
 
 def writeInDB(data, address, timeframe='1h'):
-     insert_data(address, data['openTime'], data['closeTime'], data['currentPrice'], data['open'], data['high'], data['low'], data['close'], data['percentChangePrice'], timeframe)
-
+    insert_data(address, data['openTime'], data['closeTime'], data['currentPrice'], data['open'], data['high'], data['low'], data['close'], data['percentChangePrice'], timeframe)
+        
 async def getData(address, timeframe):
     while True:
         try:
