@@ -7,13 +7,24 @@ services:
       dockerfile: Dockerfile
     ports:
       - '5000:5000'
-
   client:
     build:
       context: ./client
       dockerfile: Dockerfile
     ports:
       - '5001:4200'
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD} 
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
 
   proxy:
     image: nginx:latest
