@@ -80,9 +80,11 @@ async def getPrice(address):
 
 def percentChange(timeframe):
     if timeframe == '1h':
-        if len(pricesHours) < 2 or pricesHours[0] is None or pricesHours[-1] is None:
+        if len(pricesHours) > 2 and pricesHours[0] is not None and pricesHours[-1] is not None:
             return None
-    return ((pricesMinutes[-1] - pricesMinutes[0]) / (pricesMinutes[0] + pricesMinutes[-1] / 2)) * 100
+    elif timeframe == '5m':
+        if len(pricesMinutes) > 2 and pricesMinutes[0] is not None and pricesMinutes[-1] is not None:
+            return ((pricesMinutes[-1] - pricesMinutes[0]) / (pricesMinutes[0] + pricesMinutes[-1] / 2)) * 100
 
 async def writeFloorInFile(data, address, timeframe):
     with open(f'./candles/candles{address}{timeframe}.json', 'w+', encoding='utf8') as file:
