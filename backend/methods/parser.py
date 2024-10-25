@@ -2,7 +2,6 @@ import asyncio
 from datetime import datetime, timedelta
 import pytz
 import json
-import os
 from db.connect_db import check_db_connection, insert_data
 from methods.get_floor import get_nft_collection_floor
 
@@ -10,7 +9,6 @@ timezone = pytz.timezone('Europe/Moscow')
 
 pricesMinutes = []
 pricesHours = []
-close_price = None
 
 now = datetime.now(timezone)
 close_time_hour = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
@@ -20,7 +18,6 @@ open_time_minutes = now.replace(second=0, microsecond=0)
 
 def get_time_minutes(address):
     global open_time_minutes, close_time_minutes, pricesMinutes
-    
     # Обновление текущего времени
     now = datetime.now(timezone)
     if len(pricesMinutes) > 0 and close_time_minutes <= now.replace(second=0, microsecond=0):
@@ -98,8 +95,12 @@ async def writeFloorInFile(data, address, timeframe):
         file.write('\n')
 
 def writeInDB(data, address, timeframe='1h'):
-    insert_data(address, data['openTime'], data['closeTime'], data['currentPrice'], data['open'], data['high'], data['low'], data['close'], data['percentChangePrice'], timeframe)
-        
+    try:
+        if check_db_connection():
+            insert_data(address, data['openTime'], data['closeTime'], data['currentPrice'], data['open'], data['high'], data['low'], data['close'], data['percentChangePrice'], timeframe)
+    except Exception as e:
+        print(e)            
+
 async def getData(address, timeframe):
     while True:
         try:
