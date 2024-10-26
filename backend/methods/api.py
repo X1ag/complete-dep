@@ -50,4 +50,4 @@ async def get_collection_info(address: str = 'EQAOQdwdw8kGftJCSFgOErM1mBjYPe4DBP
     return request
             
 def main():
-    app.run(debug=True)
+    app.run(host='0.0.0.0', post=5000,debug=True)
