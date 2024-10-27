@@ -90,7 +90,7 @@ def insert_data(address, openTime, closeTime, currentPrice, openPrice, maxPrice,
 		# Обработка ошибок
 		print(f'Error: {e}')
 
-def connect_db(address, timeframe):
+def get_history_from_db(address, timeframe):
 	try:
 		conn = psycopg2.connect(
 						dbname=os.getenv('DB_NAME'),

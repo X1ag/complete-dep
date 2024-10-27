@@ -31,7 +31,7 @@ def get_time_minutes(address):
             'low': min(pricesMinutes),
             'close': pricesMinutes[-1],
         }
-        writeInDB(data, address)
+        writeInDB(data, address, timeframe='5m')
         print(f"Minutes candles was write in DB address:{address}\033[0m")
         pricesMinutes.clear()
         close_time_minutes = (now + timedelta(minutes=5)).replace(second=0, microsecond=0)
@@ -55,7 +55,7 @@ def get_time_hour(address):
             'low': min(pricesHours),
             'close': pricesHours[-1],
         }
-        writeInDB(data, address)
+        writeInDB(data, address, timeframe='1h')
         print(f"Hours candles was write in DB address:{address}\033[0m")
         pricesHours.clear()
         close_time_hour = (now + timedelta(hours=1)).replace(minute=0,second=0, microsecond=0)
@@ -64,14 +64,16 @@ def get_time_hour(address):
     print(f'\033[92m close time: {close_time_hour} \033[0m')
     return open_time_hour, close_time_hour
 
-async def getPrice(address):
+async def getPrice(address, timeframe):
     print(f'Fetching price for address: {address}')
     result = await get_nft_collection_floor(address)
     if result is None:
         asyncio.sleep(40)
         result = await get_nft_collection_floor(address)
-    pricesMinutes.append(result)
-    pricesHours.append(result)
+    if timeframe=='5m':
+        pricesMinutes.append(result)
+    elif timeframe=='1h':
+        pricesHours.append(result)
     print(f'\033[92m Price fetched: {result} \033[0m')
     return result
 
@@ -94,7 +96,7 @@ async def writeFloorInFile(data, address, timeframe):
             print(f"File \033[96mcandles{address}{timeframe}\033[0m.json updated {len(pricesMinutes)} candles")
         file.write('\n')
 
-def writeInDB(data, address, timeframe='1h'):
+def writeInDB(data, address, timeframe):
     try:
         if check_db_connection():
             insert_data(address, data['openTime'], data['closeTime'], data['currentPrice'], data['open'], data['high'], data['low'], data['close'], data['percentChangePrice'], timeframe)

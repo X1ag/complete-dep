@@ -1,7 +1,7 @@
 import json
 from quart import Quart, jsonify
 from quart_cors import cors
-from db.connect_db import check_db_connection, connect_db
+from db.connect_db import check_db_connection, get_history_from_db
 import requests
 
 app = Quart(__name__)
@@ -24,7 +24,7 @@ async def get_data(address, timeframe):
 async def get_history(address, timeframe):
     try:
         if check_db_connection:
-            return connect_db(address,timeframe)
+            return get_history_from_db(address,timeframe)
     except FileNotFoundError:
        return jsonify({"error": "File not found"}), 404
     except json.decoder.JSONDecodeError:
@@ -50,4 +50,4 @@ async def get_collection_info(address: str = 'EQAOQdwdw8kGftJCSFgOErM1mBjYPe4DBP
     return request
             
 def main():
-    app.run(host='0.0.0.0', post=5000,debug=True)
+    app.run(host='0.0.0.0', port=5000,debug=True)
