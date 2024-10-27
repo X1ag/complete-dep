@@ -44,47 +44,47 @@ def insert_data(address, openTime, closeTime, currentPrice, openPrice, maxPrice,
 		# Создание курсора
 		with conn.cursor() as curs:
 			# SQL-запрос для вставки данных
-			if timeframe == '1h':
-				create_query = '''
-					CREATE TABLE IF NOT EXISTS candlesHours (
-					address VARCHAR(255) NOT NULL,
-					openTime BIGINT NOT NULL,
-					closeTime BIGINT NOT NULL,
-					currentPrice FLOAT NOT NULL,
-					openPrice FLOAT,
-					maxPrice FLOAT,
-					minPrice FLOAT,
-					closePrice FLOAT,
-					priceChange FLOAT
-					);
-					'''
-				curs.execute(create_query)
+			
+			if address=='EQAOQdwdw8kGftJCSFgOErM1mBjYPe4DBPq8-AhF6vr9si5N':
+				if timeframe == '1h':
+					create_query = '''
+						CREATE TABLE IF NOT EXISTS candlesHoursAnon (
+						openTime BIGINT NOT NULL,
+						closeTime BIGINT NOT NULL,
+						currentPrice FLOAT NOT NULL,
+						openPrice FLOAT,
+						maxPrice FLOAT,
+						minPrice FLOAT,
+						closePrice FLOAT,
+						priceChange FLOAT
+						);
+						'''
+					curs.execute(create_query)
 
-				insert_query = '''
-				INSERT INTO candlesHours (address, openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
-				%s, %s, %s, %s, %s, %s, %s, %s, %s
-				);'''
-			elif timeframe == '5m':
-				create_query = '''
-			CREATE TABLE IF NOT EXISTS candlesMinutes (
-			address VARCHAR(255) NOT NULL,
-			openTime BIGINT NOT NULL,
-			closeTime BIGINT NOT NULL,
-			currentPrice FLOAT NOT NULL,
-			openPrice FLOAT,
-			maxPrice FLOAT,
-			minPrice FLOAT,
-			closePrice FLOAT,
-			priceChange FLOAT
-			);
-			'''
-				curs.execute(create_query)
+					insert_query = '''
+					INSERT INTO candlesHoursAnon (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
+					%s, %s, %s, %s, %s, %s, %s, %s
+					);'''
+				elif timeframe == '5m':
+					create_query = '''
+				CREATE TABLE IF NOT EXISTS candlesMinutesAnon (
+				openTime BIGINT NOT NULL,
+				closeTime BIGINT NOT NULL,
+				currentPrice FLOAT NOT NULL,
+				openPrice FLOAT,
+				maxPrice FLOAT,
+				minPrice FLOAT,
+				closePrice FLOAT,
+				priceChange FLOAT
+				);
+				'''
+					curs.execute(create_query)
 
-				insert_query = '''
-							INSERT INTO candlesMinutes (address, openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
-							%s, %s, %s, %s, %s, %s, %s, %s, %s
+			insert_query = '''
+							INSERT INTO candlesMinutesAnon (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
+							%s, %s, %s, %s, %s, %s, %s, %s
 							);'''
-			curs.execute(insert_query, (address, openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange))
+			curs.execute(insert_query, (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange))
 			conn.commit()
 	except psycopg2.Error as e:
 		# Обработка ошибок
@@ -102,10 +102,11 @@ def get_history_from_db(address, timeframe):
 		# Создание курсора
 		with conn.cursor() as curs:
 			# Выполнение SQL-запроса
-			if timeframe =='1h':
-				curs.execute('SELECT * FROM candlesHours WHERE address = %s;', (address,))
-			elif timeframe == '5m':
-				curs.execute('SELECT * FROM candlesMinutes WHERE address = %s;', (address,))
+			if address=='EQAOQdwdw8kGftJCSFgOErM1mBjYPe4DBPq8-AhF6vr9si5N':
+				if timeframe =='1h':
+					curs.execute('SELECT * FROM candlesHoursAnon;')
+				elif timeframe == '5m':
+					curs.execute('SELECT * FROM candlesMinutesAnon;')
 			# Получение всех строк результата запроса
 			all_candles = curs.fetchall()
 			return all_candles	
