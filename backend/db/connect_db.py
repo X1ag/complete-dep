@@ -44,7 +44,6 @@ def insert_data(address, openTime, closeTime, currentPrice, openPrice, maxPrice,
 		# Создание курсора
 		with conn.cursor() as curs:
 			# SQL-запрос для вставки данных
-			
 			if address=='EQAOQdwdw8kGftJCSFgOErM1mBjYPe4DBPq8-AhF6vr9si5N':
 				if timeframe == '1h':
 					create_query = '''
@@ -65,6 +64,7 @@ def insert_data(address, openTime, closeTime, currentPrice, openPrice, maxPrice,
 					INSERT INTO candlesHoursAnon (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
 					%s, %s, %s, %s, %s, %s, %s, %s
 					);'''
+
 				elif timeframe == '5m':
 					create_query = '''
 				CREATE TABLE IF NOT EXISTS candlesMinutesAnon (
@@ -79,11 +79,91 @@ def insert_data(address, openTime, closeTime, currentPrice, openPrice, maxPrice,
 				);
 				'''
 					curs.execute(create_query)
-
-			insert_query = '''
+					insert_query = '''
 							INSERT INTO candlesMinutesAnon (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
 							%s, %s, %s, %s, %s, %s, %s, %s
 							);'''
+					
+			elif address=='EQCA14o1-VWhS2efqoh_9M1b_A9DtKTuoqfmkn83AbJzwnPi':
+				if timeframe == '1h':
+					create_query = '''
+					CREATE TABLE IF NOT EXISTS candlesHoursTgUsernames (
+					openTime BIGINT NOT NULL,
+					closeTime BIGINT NOT NULL,
+					currentPrice FLOAT NOT NULL,
+					openPrice FLOAT,
+					maxPrice FLOAT,
+					minPrice FLOAT,
+					closePrice FLOAT,
+					priceChange FLOAT
+					);
+					'''
+					curs.execute(create_query)
+
+					insert_query = '''
+					INSERT INTO candlesHoursTgUsernames (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
+					%s, %s, %s, %s, %s, %s, %s, %s
+					);'''
+
+				elif timeframe == '5m':
+					create_query = '''
+					CREATE TABLE IF NOT EXISTS candlesMinutesTgUsernames (
+					openTime BIGINT NOT NULL,
+					closeTime BIGINT NOT NULL,
+					currentPrice FLOAT NOT NULL,
+					openPrice FLOAT,
+					maxPrice FLOAT,
+					minPrice FLOAT,
+					closePrice FLOAT,
+					priceChange FLOAT
+					);
+					'''
+					curs.execute(create_query)
+					insert_query = '''
+					INSERT INTO candlesMinutesTgUsernames (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
+					%s, %s, %s, %s, %s, %s, %s, %s
+					);'''
+
+			elif address=='EQC3dNlesgVD8YbAazcauIrXBPfiVhMMr5YYk2in0Mtsz0Bz':
+				if timeframe == '1h':
+					create_query = '''
+					CREATE TABLE IF NOT EXISTS candlesHoursDomains (
+					openTime BIGINT NOT NULL,
+					closeTime BIGINT NOT NULL,
+					currentPrice FLOAT NOT NULL,
+					openPrice FLOAT,
+					maxPrice FLOAT,
+					minPrice FLOAT,
+					closePrice FLOAT,
+					priceChange FLOAT
+					);
+					'''
+					curs.execute(create_query)
+
+					insert_query = '''
+					INSERT INTO candlesHoursDomains (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
+					%s, %s, %s, %s, %s, %s, %s, %s
+					);'''
+
+				elif timeframe == '5m':
+					create_query = '''
+					CREATE TABLE IF NOT EXISTS candlesMinutesDomains (
+					openTime BIGINT NOT NULL,
+					closeTime BIGINT NOT NULL,
+					currentPrice FLOAT NOT NULL,
+					openPrice FLOAT,
+					maxPrice FLOAT,
+					minPrice FLOAT,
+					closePrice FLOAT,
+					priceChange FLOAT
+					);
+					'''
+					curs.execute(create_query)
+					insert_query = '''
+					INSERT INTO candlesMinutesDomains (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange) VALUES (
+					%s, %s, %s, %s, %s, %s, %s, %s
+					);'''
+			
 			curs.execute(insert_query, (openTime, closeTime, currentPrice, openPrice, maxPrice, minPrice, closePrice, priceChange))
 			conn.commit()
 	except psycopg2.Error as e:
@@ -107,6 +187,18 @@ def get_history_from_db(address, timeframe):
 					curs.execute('SELECT * FROM candlesHoursAnon;')
 				elif timeframe == '5m':
 					curs.execute('SELECT * FROM candlesMinutesAnon;')
+
+			elif address=='EQC3dNlesgVD8YbAazcauIrXBPfiVhMMr5YYk2in0Mtsz0Bz':
+				if timeframe =='1h':
+					curs.execute('SELECT * FROM candlesHoursDomains;')
+				elif timeframe == '5m':
+					curs.execute('SELECT * FROM candlesMinutesDomains;')
+
+			elif address=='EQCA14o1-VWhS2efqoh_9M1b_A9DtKTuoqfmkn83AbJzwnPi':
+				if timeframe =='1h':
+					curs.execute('SELECT * FROM candlesHoursTgUsernames;')
+				elif timeframe == '5m':
+					curs.execute('SELECT * FROM candlesMinutesTgUsernames;')
 			# Получение всех строк результата запроса
 			all_candles = curs.fetchall()
 			return all_candles	
